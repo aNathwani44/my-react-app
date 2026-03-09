@@ -1,0 +1,40 @@
+div h2 {
+    border-style: double;
+    border-color: rgb(241, 68, 68);
+    border-width: 5px;
+}
+
+div p {
+    border-color: rgb(38, 165, 255);
+    border-style: double;
+    border-width: 5px;
+}
+
+div h2:hover {
+    border-color: rgb(20, 241, 20);
+}
+
+div p:hover {
+    border-color: rgb(235, 255, 51);
+}
+
+div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+
+#lib-count {
+    border-color: rgb(255, 255, 255);
+    border-style: double;
+    border-width: 5px;
+}
+/* #lib-count:hover {
+    border-color: rgb(255, 0, 0);
+} */
+
+#lib-count:hover {
+    border-color: rgb(255, 0, 0);
+}
