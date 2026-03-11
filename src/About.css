@@ -1,0 +1,23 @@
+#about-description {
+    font-size: 18px;
+    color: #ffffff;
+    position: absolute;
+    left: 0%;
+    top: 10%;
+    border-style: none;
+    width: 30%;
+    padding: 20px;
+}
+
+#about-button {
+    position: absolute;
+    left: 10%;
+    top: 5%;
+    border-style: double;
+    border-color: rgb(255, 255, 255);
+    border-width: 5px;
+    border-style: ridge;
+    padding: 10px;
+    background-color: transparent;
+    color: rgb(255, 255, 255);
+}
