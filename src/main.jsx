@@ -5,6 +5,7 @@ import App from './App.jsx'
 import Card from './Card.jsx'
 import About from './About.jsx'
 import Contact from './Contact.jsx'
+import MInfo from './MInfo.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -13,6 +14,7 @@ createRoot(document.getElementById('root')).render(
     <Card name="School" description="Where Anagh learns" />
     <About />
     <Contact />
+    <MInfo />
     <App />
   </StrictMode>,
 )
