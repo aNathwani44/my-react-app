@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { db, auth, provider } from './firebase';
 
 // Import Firebase Authentication methods
-import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
+import { signInWithRedirect, signOut, onAuthStateChanged } from 'firebase/auth';
 
 // Import Firestore methods
 import { collection, getDocs, addDoc } from 'firebase/firestore';
