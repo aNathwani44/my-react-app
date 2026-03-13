@@ -1,95 +1,113 @@
-// Import React hooks and Firebase functionality
+// Import React hooks
 import { useEffect, useState } from 'react';
-import { db, auth, provider } from './firebase'; // Custom Firebase config
-import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth'; // Auth methods
-import { collection, getDocs } from 'firebase/firestore'; // Firestore methods
+
+// Import Firebase config
+import { db, auth, provider } from './firebase';
+
+// Import Firebase Authentication methods
+import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
+
+// Import Firestore methods
+import { collection, getDocs, addDoc } from 'firebase/firestore';
 
 function Google() {
-  // State to hold the logged-in user
+
+  // Logged-in user state
   const [user, setUser] = useState(null);
 
-  // State to hold messages from Firestore
+  // Firestore messages
   const [messages, setMessages] = useState([]);
 
-  // Monitor authentication status (e.g., login/logout) in real time
+  // Message input box
+  const [input, setInput] = useState('');
+
+  // Watch authentication state
   useEffect(() => {
-    // Set up a listener that triggers every time the auth state changes
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser); // Update the user state with the logged-in user
+      setUser(currentUser);
     });
 
-    // Clean up the listener when the component unmounts
     return () => unsubscribe();
   }, []);
 
-  // Handle Google login using a popup window
+  // Login with Google
   const handleLogin = async () => {
     try {
-      await signInWithPopup(auth, provider); // Triggers Google login flow
+      await signInWithPopup(auth, provider);
     } catch (error) {
-      console.error('Login failed', error); // Catch and display any login errors
+      console.error("Login failed:", error);
     }
   };
 
-  // Handle logout for the authenticated user
+  // Logout user
   const handleLogout = async () => {
     try {
-      await signOut(auth); // Signs out the current user
-      setUser(null); // Clear the user from local state
+      await signOut(auth);
+      setUser(null);
     } catch (error) {
-      console.error('Logout failed', error); // Catch and display logout errors
+      console.error("Logout failed:", error);
     }
   };
 
-  // Fetch all messages from the "messages" collection in Firestore
+  // Fetch messages from Firestore
   const fetchMessages = async () => {
-    const snapshot = await getDocs(collection(db, 'messages')); // Get all documents
-    const list = snapshot.docs.map(doc => doc.data()); // Convert docs to plain JS objects
-    setMessages(list); // Update the messages state
+    const snapshot = await getDocs(collection(db, "messages"));
+    const list = snapshot.docs.map(doc => doc.data());
+    setMessages(list);
   };
 
-  // Add a new message to Firestore
+  // Send a message to Firestore
   const sendMessage = async () => {
-    if (!input.trim()) return; // Don't send empty messages
+    if (!input.trim()) return;
 
-    // Add a new message with the user's name and current timestamp
-    await addDoc(collection(db, 'messages'), {
-      text: input,
-      name: user.displayName,
-      timestamp: Date.now()
-    });
+    try {
+      await addDoc(collection(db, "messages"), {
+        text: input,
+        name: user.displayName,
+        timestamp: Date.now()
+      });
 
-    setInput(''); // Clear the input field
-    fetchMessages(); // Refresh the message list after sending
+      setInput("");
+      fetchMessages();
+    } catch (error) {
+      console.error("Error sending message:", error);
+    }
   };
 
-  // Re-fetch messages any time the user logs in
+  // Load messages after login
   useEffect(() => {
     if (user) {
       fetchMessages();
     }
   }, [user]);
 
-  // UI rendering
   return (
     <div>
-      <h1>Firebase + React App with Google Log-in</h1>
-      {/* If user is logged in, show greeting, logout button, and messages */}
+      <h1>Firebase + React Google Login</h1>
+
       {user ? (
         <div>
           <h2>Hello, {user.displayName}</h2>
           <button onClick={handleLogout}>Log Out</button>
 
+          <div style={{ marginTop: "20px" }}>
+            <input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Type a message..."
+            />
+            <button onClick={sendMessage}>Send</button>
+          </div>
+
           <ul>
             {messages.map((msg, i) => (
               <li key={i}>
-                <strong>{msg.name || 'Anon'}:</strong> {msg.text}
+                <strong>{msg.name || "Anon"}:</strong> {msg.text}
               </li>
             ))}
           </ul>
         </div>
       ) : (
-        // If no user is logged in, show login button
         <div>
           <p>Please log in with Google to continue.</p>
           <button onClick={handleLogin}>Login with Google</button>
@@ -98,4 +116,5 @@ function Google() {
     </div>
   );
 }
-export default App;
+
+export default Google;

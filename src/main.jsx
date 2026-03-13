@@ -6,7 +6,7 @@ import Card from './Card.jsx'
 import About from './About.jsx'
 import Contact from './Contact.jsx'
 import MInfo from './MInfo.jsx'
-import Main from './Google.jsx'
+import Google from './Google.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -16,6 +16,7 @@ createRoot(document.getElementById('root')).render(
     <About />
     <Contact />
     <MInfo />
+    <Google />
     <App />
   </StrictMode>,
 )
