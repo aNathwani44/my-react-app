@@ -1,14 +1,19 @@
 // Import React hooks
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 // Import Firebase config
-import { db, auth, provider } from './firebase';
+import { db, auth, provider } from "./firebase";
 
 // Import Firebase Authentication methods
-import { signInWithRedirect, signOut, onAuthStateChanged } from 'firebase/auth';
+import {
+  signInWithRedirect,
+  getRedirectResult,
+  signOut,
+  onAuthStateChanged
+} from "firebase/auth";
 
 // Import Firestore methods
-import { collection, getDocs, addDoc } from 'firebase/firestore';
+import { collection, getDocs, addDoc } from "firebase/firestore";
 
 function Google() {
 
@@ -18,8 +23,8 @@ function Google() {
   // Firestore messages
   const [messages, setMessages] = useState([]);
 
-  // Message input box
-  const [input, setInput] = useState('');
+  // Message input
+  const [input, setInput] = useState("");
 
   // Watch authentication state
   useEffect(() => {
@@ -30,10 +35,23 @@ function Google() {
     return () => unsubscribe();
   }, []);
 
-  // Login with Google
+  // Handle redirect result after returning from Google login
+  useEffect(() => {
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result && result.user) {
+          setUser(result.user);
+        }
+      })
+      .catch((error) => {
+        console.error("Redirect login error:", error);
+      });
+  }, []);
+
+  // Login with Google (redirect)
   const handleLogin = async () => {
     try {
-      await signInWithPopup(auth, provider);
+      await signInWithRedirect(auth, provider);
     } catch (error) {
       console.error("Login failed:", error);
     }
@@ -52,11 +70,11 @@ function Google() {
   // Fetch messages from Firestore
   const fetchMessages = async () => {
     const snapshot = await getDocs(collection(db, "messages"));
-    const list = snapshot.docs.map(doc => doc.data());
+    const list = snapshot.docs.map((doc) => doc.data());
     setMessages(list);
   };
 
-  // Send a message to Firestore
+  // Send message to Firestore
   const sendMessage = async () => {
     if (!input.trim()) return;
 
@@ -74,7 +92,7 @@ function Google() {
     }
   };
 
-  // Load messages after login
+  // Load messages when user logs in
   useEffect(() => {
     if (user) {
       fetchMessages();
